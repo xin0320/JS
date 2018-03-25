@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style type="text/css">
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #demo{
+            display: block;
+            width: 400px;
+            height: 255px;
+            margin: 50px;
+            position: relative;
+            border: 1px solid #ccc;
+
+        }
+
+        #small-box{
+            position: relative;
+            z-index: 1;
+        }
+
+        #float-box{
+            width: 160px;
+            height: 120px;
+            position: absolute;
+            background: #ffffcc;
+            border: 1px solid #ccc;
+            opacity: 0.5;
+            cursor: move;
+            display: none;
+            filter: alpha(opacity=50);
+        }
+
+        #mark{
+            width: 160px;
+            height: 120px;
+            position: absolute;
+            background: #ffffcc;
+            border: 1px solid #ccc;
+            opacity: 0.5;
+            cursor: move;
+            display: none;
+            filter: alpha(opacity=50);
+        }
+        #big-box{
+            width: 400px;
+            height: 300px;
+            position: absolute;
+            top: 0px;
+            left: 460px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            z-index: 1;
+
+        }
+
+        #big-box img{
+            position: absolute;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <div id="demo">
+        <div id="small-box">
+            <div id="mark"></div>
+            <div id="float-box"></div>
+            <img src="http://img.mukewang.com/537d77fb0001559d04000255.jpg"/>
+        </div>
+        <div id="big-box">
+            <img src="http://img.mukewang.com/537d781b0001c04210240654.jpg"/>
+        </div>
+        </div> 
+        
+        <script>
+            window.onload = function(){
+                var objDemo = document.getElementById("demo");
+                var objSmallBox = document.getElementById("small-box");
+                var objFloatBox = document.getElementById("float-box");
+                var objBigBox = document.getElementById("big-box");
+                var objBigBoxImage = objBigBox.getElementsByTagName("img")[0];
+                //用mark替换float-box
+                var objMark = document.getElementById("mark");
+                //鼠标移动到小图片上时出现浮动窗口,并出现放大的图像，鼠标移除小图片时浮动窗口消失，放大版图像消失
+                objSmallBox.onmouseover = function(){
+                    objMark.style.display = "block";
+                    objBigBox.style.display = "block";
+                }
+
+                objSmallBox.onmouseout = function(){
+                    objMark.style.display = "none";
+                    objBigBox.style.display = "none";
+                }
+
+                objSmallBox.onmousemove = function(ev){
+                    var _event = ev;
+                    //计算漂浮窗口即放大镜随着鼠标移动时，距离其父元素的left和top的位置，放大镜相对其父元素进行absolute定位
+                    var left = _event.clientX - objDemo.offsetLeft - objSmallBox.offsetLeft - objMark.offsetWidth/2;
+                    var top = _event.clientY - objDemo.offsetTop - objSmallBox.offsetTop - objMark.offsetHeight/2;
+
+                    //将放大镜控制在小图片的范围内，不可超出
+                    if(left < 0){
+                        left = 0;
+                    }else if(left > objSmallBox.offsetWidth - objMark.offsetWidth){
+                        left = objSmallBox.offsetWidth - objMark.offsetWidth;
+                    }
+
+                    if(top < 0){
+                        top = 0;
+                    }else if(top > objSmallBox.offsetHeight - objMark.offsetHeight){
+                        top = objSmallBox.offsetHeight - objMark.offsetHeight;
+                    }
+
+                    objMark.style.left = left + "px";
+                    objMark.style.top = top + "px";
+                    
+
+                    var leftX = left * (objBigBoxImage.offsetWidth - objBigBox.offsetWidth) / (objSmallBox.offsetWidth - objMark.offsetWidth);
+                    var topX = top * (objBigBoxImage.offsetHeight - objBigBox.offsetHeight) / (objSmallBox.offsetHeight - objMark.offsetHeight);
+
+                    objBigBoxImage.style.left = -leftX + "px";
+                    objBigBoxImage.style.top = -topX + "px";
+                }
+            }            
+        </script>
+</body>
+</html>
